@@ -1,0 +1,94 @@
+[
+  {
+    "id": "budget-100",
+    "type": "standard",
+    "title": "Presupuesto 100",
+    "description": "Monta tu once sin superar 100 puntos de presupuesto. Cada jugador tiene un coste de mercado según su nivel (no es su rating).",
+    "rules": {
+      "maxPlayers": 11,
+      "budget": 100,
+      "maxPerTeam": 3,
+      "requiredPositions": { "GK": 1, "DF": 3, "MF": 3, "FW": 2 },
+      "formation": "4-3-3"
+    },
+    "scoring": {
+      "base": "sum_rating",
+      "bonuses": [
+        { "type": "same_team_pairs", "points": 2, "minPairs": 2 },
+        { "type": "perfect_formation", "points": 3 }
+      ]
+    }
+  },
+  {
+    "id": "world-xi",
+    "type": "standard",
+    "title": "Once mundial",
+    "description": "Elige los mejores del mundo: máximo un jugador por selección.",
+    "rules": {
+      "maxPlayers": 11,
+      "maxPerTeam": 1,
+      "requiredPositions": { "GK": 1, "DF": 3, "MF": 3, "FW": 2 },
+      "formation": "4-3-3"
+    },
+    "scoring": {
+      "base": "sum_rating",
+      "bonuses": [
+        { "type": "all_confederations", "points": 5 }
+      ]
+    }
+  },
+  {
+    "id": "group-j-heroes",
+    "type": "standard",
+    "title": "Héroes del Grupo J",
+    "description": "Solo puedes elegir jugadores de selecciones del Grupo J.",
+    "rules": {
+      "maxPlayers": 11,
+      "maxPerTeam": 4,
+      "allowedGroups": ["J"],
+      "requiredPositions": { "GK": 1, "DF": 3, "MF": 3, "FW": 2 },
+      "formation": "4-3-3"
+    },
+    "scoring": {
+      "base": "sum_rating",
+      "bonuses": []
+    }
+  },
+  {
+    "id": "south-america",
+    "type": "standard",
+    "title": "Sudamericanos",
+    "description": "Un once solo con jugadores de selecciones CONMEBOL.",
+    "rules": {
+      "maxPlayers": 11,
+      "maxPerTeam": 3,
+      "allowedTeams": ["argentina", "brazil", "colombia", "ecuador", "paraguay"],
+      "requiredPositions": { "GK": 1, "DF": 3, "MF": 3, "FW": 2 },
+      "formation": "4-3-3"
+    },
+    "scoring": {
+      "base": "sum_rating",
+      "bonuses": [
+        { "type": "same_team_pairs", "points": 3, "minPairs": 1 }
+      ]
+    }
+  },
+  {
+    "id": "balanced",
+    "type": "daily",
+    "title": "Equilibrado",
+    "description": "Un once balanceado sin restricción de presupuesto. Cumple las posiciones mínimas.",
+    "rules": {
+      "maxPlayers": 11,
+      "maxPerTeam": 3,
+      "requiredPositions": { "GK": 1, "DF": 4, "MF": 3, "FW": 2 },
+      "formation": "4-3-3"
+    },
+    "scoring": {
+      "base": "sum_rating",
+      "bonuses": [
+        { "type": "perfect_formation", "points": 5 }
+      ]
+    }
+  }
+]

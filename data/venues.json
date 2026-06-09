@@ -1,0 +1,15 @@
+[
+  { "id": "estadio-azteca", "name": "Estadio Azteca", "city": "Ciudad de México", "country": "México", "capacity": 87523, "timezone": "America/Mexico_City" },
+  { "id": "akron", "name": "Estadio Akron", "city": "Guadalajara", "country": "México", "capacity": 49850, "timezone": "America/Mexico_City" },
+  { "id": "bbva-monterrey", "name": "Estadio BBVA", "city": "Monterrey", "country": "México", "capacity": 53500, "timezone": "America/Monterrey" },
+  { "id": "metlife-stadium", "name": "MetLife Stadium", "city": "East Rutherford", "country": "Estados Unidos", "capacity": 82500, "timezone": "America/New_York" },
+  { "id": "sofi-stadium", "name": "SoFi Stadium", "city": "Los Ángeles", "country": "Estados Unidos", "capacity": 70240, "timezone": "America/Los_Angeles" },
+  { "id": "att-stadium", "name": "AT&T Stadium", "city": "Arlington", "country": "Estados Unidos", "capacity": 80000, "timezone": "America/Chicago" },
+  { "id": "mercedes-benz-atlanta", "name": "Mercedes-Benz Stadium", "city": "Atlanta", "country": "Estados Unidos", "capacity": 71000, "timezone": "America/New_York" },
+  { "id": "hard-rock-miami", "name": "Hard Rock Stadium", "city": "Miami", "country": "Estados Unidos", "capacity": 65326, "timezone": "America/New_York" },
+  { "id": "lumen-field", "name": "Lumen Field", "city": "Seattle", "country": "Estados Unidos", "capacity": 69000, "timezone": "America/Los_Angeles" },
+  { "id": "levis-stadium", "name": "Levi's Stadium", "city": "Santa Clara", "country": "Estados Unidos", "capacity": 68500, "timezone": "America/Los_Angeles" },
+  { "id": "lincoln-financial", "name": "Lincoln Financial Field", "city": "Filadelfia", "country": "Estados Unidos", "capacity": 69596, "timezone": "America/New_York" },
+  { "id": "bmo-field", "name": "BMO Field", "city": "Toronto", "country": "Canadá", "capacity": 45000, "timezone": "America/Toronto" },
+  { "id": "bc-place", "name": "BC Place", "city": "Vancouver", "country": "Canadá", "capacity": 54500, "timezone": "America/Vancouver" }
+]
