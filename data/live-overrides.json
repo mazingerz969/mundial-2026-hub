@@ -1,12 +1,56 @@
 {
-  "updatedAt": "2026-06-14T21:07:35.688Z",
-  "tournament": {},
+  "updatedAt": "2026-06-14T21:12:00.982Z",
+  "tournament": {
+    "lastUpdated": "2026-06-14"
+  },
   "matches": {
     "match-group-a-01": {
       "status": "finished",
       "score": {
         "home": 2,
+        "away": 0
+      }
+    },
+    "match-group-d-03": {
+      "status": "finished",
+      "score": {
+        "home": 4,
         "away": 1
+      }
+    },
+    "match-group-b-04": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    "match-group-c-01": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    "match-group-c-02": {
+      "status": "finished",
+      "score": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    "match-group-e-01": {
+      "status": "finished",
+      "score": {
+        "home": 7,
+        "away": 1
+      }
+    },
+    "match-group-f-01": {
+      "status": "live",
+      "score": {
+        "home": 0,
+        "away": 0
       }
     }
   },

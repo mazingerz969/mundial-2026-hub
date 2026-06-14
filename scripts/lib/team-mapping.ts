@@ -126,18 +126,24 @@ export function findLocalMatchId(
   awayTeamId: string,
   utcDate: string,
 ): string | null {
-  const sameDay = localMatches.filter((m) => {
-    const localDay = new Date(m.datetime).toISOString().slice(0, 10);
-    return localDay === utcDate || m.datetime.startsWith(utcDate);
-  });
-
-  const direct = sameDay.find(
+  const pairing = localMatches.filter(
     (m) => m.homeTeamId === homeTeamId && m.awayTeamId === awayTeamId,
   );
-  if (direct) return direct.id;
 
-  const swapped = sameDay.find(
+  if (pairing.length === 1) return pairing[0]!.id;
+
+  if (pairing.length > 1) {
+    const sameDay = pairing.find((m) => {
+      const localDay = new Date(m.datetime).toISOString().slice(0, 10);
+      return localDay === utcDate || m.datetime.startsWith(utcDate);
+    });
+    return sameDay?.id ?? pairing[0]!.id;
+  }
+
+  const swapped = localMatches.filter(
     (m) => m.homeTeamId === awayTeamId && m.awayTeamId === homeTeamId,
   );
-  return swapped?.id ?? null;
+  if (swapped.length === 1) return swapped[0]!.id;
+
+  return null;
 }

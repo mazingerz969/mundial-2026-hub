@@ -161,7 +161,8 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
   try {
     apiMatches = await fetchFootballData(token, from, to);
   } catch (error) {
-    console.error(`✗ ${error instanceof Error ? error.message : error}`);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`✗ Error de red o API: ${msg}`);
     process.exit(1);
   }
 
@@ -217,7 +218,7 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
     }
 
     const status = mapStatus(api.status);
-    if (!status) {
+    if (!status || status === "scheduled") {
       skipped++;
       continue;
     }
@@ -234,6 +235,8 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
 
     if (home != null && away != null) {
       patch.score = { home, away };
+    } else if (status === "live") {
+      patch.score = { home: home ?? 0, away: away ?? 0 };
     }
 
     const penHome = api.score.penalty?.home;
