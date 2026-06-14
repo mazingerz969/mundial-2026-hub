@@ -8,7 +8,7 @@ PWA interactiva para el **FIFA World Cup 2026**: consulta de datos del torneo + 
 
 **Repositorio:** [github.com/mazingerz969/mundial-2026-hub](https://github.com/mazingerz969/mundial-2026-hub)
 
-**Live:** `https://mundial-2026-hub.vercel.app` _(actualiza tras el deploy)_
+**Live:** [mundial-2026-hub-dun.vercel.app](https://mundial-2026-hub-dun.vercel.app)
 
 ## Qué incluye
 
