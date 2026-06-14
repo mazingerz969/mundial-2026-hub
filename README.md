@@ -119,7 +119,9 @@ git commit -m "update live results"
 git push
 ```
 
-### Sin redeploy (opcional)
+### Importante
+
+Los resultados **no se inventan solos**. Hay que introducir los marcadores **oficiales** a mano (FIFA, Marca, etc.) con `update-match`. La app no tiene API de resultados reales conectada.
 
 En Vercel → Environment Variables:
 

@@ -190,10 +190,6 @@ export function HomeDashboard() {
                 {getTeamById(nextMatch.homeTeamId)?.name} vs{" "}
                 {getTeamById(nextMatch.awayTeamId)?.name}
               </p>
-            ) : finishedCount > 0 ? (
-              <p className="mt-2">
-                Jornada 1 completada · próxima jornada el 19 de junio.
-              </p>
             ) : null}
           </div>
         )}
