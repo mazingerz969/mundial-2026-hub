@@ -88,7 +88,7 @@ Durante el torneo **no hace falta redeployar** ni hacer `git push` por cada gol.
 1. Calendario base en `data/matches.json`.
 2. **`/api/live`** consulta football-data.org cada ~60 s (caché compartida) y fusiona marcadores, estado y minuto.
 3. El navegador refresca cada **30 s** si hay partidos en juego, cada **5 min** si no.
-4. **Vercel Cron** (`/api/cron/sync-live`, cada 2 min) invalida la caché aunque nadie entre en la web.
+4. *(Opcional)* `/api/cron/sync-live` invalida la caché — en plan Vercel **Hobby** no hay cron frecuente; el polling del cliente basta. Con **Pro** puedes añadir cron en `vercel.json`.
 
 ### Variables en Vercel
 
