@@ -10,16 +10,13 @@ import { getStats, getTeamById } from "@/lib/data";
 import {
   countFinishedMatches,
   getLiveFromList,
+  getMatchesForToday,
   getNextMatchForTeamFromList,
+  getNextScheduledFromList,
   getRecentFinishedFromList,
-  getUpcomingFromList,
 } from "@/lib/data/live";
 import { getQuinielaStats } from "@/lib/storage/quiniela";
-import {
-  formatDateLabel,
-  getDateKeyInTimezone,
-  getTodayKeyInTimezone,
-} from "@/lib/utils/datetime";
+import { formatDateLabel } from "@/lib/utils/datetime";
 import { getTournamentStatusLabel } from "@/lib/utils/tournament-status";
 
 export function HomeDashboard() {
@@ -28,19 +25,12 @@ export function HomeDashboard() {
   const stats = getStats();
   const quinielaScore = getQuinielaStats(matches, quinielaResults);
   const tz = settings.timezone;
-  const todayKey = getTodayKeyInTimezone(tz);
 
-  const todayMatches = matches
-    .filter((m) => getDateKeyInTimezone(m.datetime, tz) === todayKey)
-    .sort(
-      (a, b) =>
-        new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
-    );
-
+  const todayMatches = getMatchesForToday(matches, tz);
   const liveNow = getLiveFromList(matches);
   const finishedCount = countFinishedMatches(matches);
-  const recentFinished = getRecentFinishedFromList(matches, 5);
-  const nextMatch = getUpcomingFromList(matches, 1)[0];
+  const recentFinished = getRecentFinishedFromList(matches, 8);
+  const nextMatch = getNextScheduledFromList(matches, 1)[0];
   const tournamentBadge = getTournamentStatusLabel(
     tournament.startDate,
     tournament.endDate,
@@ -129,7 +119,8 @@ export function HomeDashboard() {
         </section>
       ) : null}
 
-      {liveNow.length > 0 && (
+      {liveNow.length > 0 &&
+        !todayMatches.some((m) => m.status === "live") && (
         <section>
           <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
             <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-red-500" />
@@ -170,6 +161,7 @@ export function HomeDashboard() {
                   timezone={tz}
                   spoilerMode={settings.spoilerMode}
                   compact
+                  highlight={match.status === "live"}
                 />
               </li>
             ))}

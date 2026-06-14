@@ -1,9 +1,42 @@
 import type { Match } from "@/lib/schemas";
+import {
+  getDateKeyInTimezone,
+  getTodayKeyInTimezone,
+} from "@/lib/utils/datetime";
 
 export function isMatchUpcoming(match: Match, now = Date.now()): boolean {
-  if (match.status === "live") return true;
+  if (match.status === "live") return false;
   if (match.status === "finished" || match.status === "postponed") return false;
   return new Date(match.datetime).getTime() >= now;
+}
+
+export function getNextScheduledFromList(
+  list: Match[],
+  limit = 1,
+): Match[] {
+  const now = Date.now();
+  return [...list]
+    .filter(
+      (m) =>
+        m.status === "scheduled" && new Date(m.datetime).getTime() >= now,
+    )
+    .sort(
+      (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
+    )
+    .slice(0, limit);
+}
+
+export function getMatchesForToday(list: Match[], timezone: string): Match[] {
+  const todayKey = getTodayKeyInTimezone(timezone);
+  return [...list]
+    .filter(
+      (m) =>
+        m.status === "live" ||
+        getDateKeyInTimezone(m.datetime, timezone) === todayKey,
+    )
+    .sort(
+      (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
+    );
 }
 
 export function getUpcomingFromList(list: Match[], limit = 5): Match[] {
@@ -34,11 +67,17 @@ export function getNextMatchForTeamFromList(
   teamId: string,
 ): Match | undefined {
   const now = Date.now();
-  return [...list]
+  const teamMatches = list.filter(
+    (m) => m.homeTeamId === teamId || m.awayTeamId === teamId,
+  );
+
+  const live = teamMatches.find((m) => m.status === "live");
+  if (live) return live;
+
+  return [...teamMatches]
     .filter(
       (m) =>
-        (m.homeTeamId === teamId || m.awayTeamId === teamId) &&
-        isMatchUpcoming(m, now),
+        m.status === "scheduled" && new Date(m.datetime).getTime() >= now,
     )
     .sort(
       (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),

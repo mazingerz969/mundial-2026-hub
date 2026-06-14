@@ -136,7 +136,9 @@ export function filterMatchesByTeamId(list: Match[], teamId: string): Match[] {
 export {
   countFinishedMatches,
   getLiveFromList,
+  getMatchesForToday,
   getNextMatchForTeamFromList,
+  getNextScheduledFromList,
   getRecentFinishedFromList,
   getUpcomingFromList,
   isMatchUpcoming,

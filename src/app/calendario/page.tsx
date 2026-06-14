@@ -1,11 +1,16 @@
-import { Suspense } from "react";
-
 import { CalendarioView } from "@/components/data/CalendarioView";
 
-export default function CalendarioPage() {
+interface CalendarioPageProps {
+  searchParams: Promise<{ match?: string; venue?: string }>;
+}
+
+export default async function CalendarioPage({ searchParams }: CalendarioPageProps) {
+  const params = await searchParams;
+
   return (
-    <Suspense fallback={<p className="text-text-secondary">Cargando calendario…</p>}>
-      <CalendarioView />
-    </Suspense>
+    <CalendarioView
+      initialMatchId={params.match ?? null}
+      initialVenueId={params.venue ?? null}
+    />
   );
 }

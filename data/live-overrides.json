@@ -1,11 +1,12 @@
 {
-  "updatedAt": "2026-06-14T21:14:45.835Z",
+  "updatedAt": "2026-06-14T21:19:51.696Z",
   "tournament": {
     "lastUpdated": "2026-06-14"
   },
   "matches": {
     "match-group-a-01": {
       "status": "finished",
+      "datetime": "2026-06-11T19:00:00Z",
       "score": {
         "home": 2,
         "away": 0
@@ -13,6 +14,7 @@
     },
     "match-group-d-03": {
       "status": "finished",
+      "datetime": "2026-06-13T01:00:00Z",
       "score": {
         "home": 4,
         "away": 1
@@ -20,6 +22,7 @@
     },
     "match-group-b-04": {
       "status": "finished",
+      "datetime": "2026-06-13T19:00:00Z",
       "score": {
         "home": 1,
         "away": 1
@@ -27,6 +30,7 @@
     },
     "match-group-c-01": {
       "status": "finished",
+      "datetime": "2026-06-13T22:00:00Z",
       "score": {
         "home": 1,
         "away": 1
@@ -34,6 +38,7 @@
     },
     "match-group-c-02": {
       "status": "finished",
+      "datetime": "2026-06-14T01:00:00Z",
       "score": {
         "home": 0,
         "away": 1
@@ -41,6 +46,7 @@
     },
     "match-group-e-01": {
       "status": "finished",
+      "datetime": "2026-06-14T17:00:00Z",
       "score": {
         "home": 7,
         "away": 1
@@ -48,8 +54,9 @@
     },
     "match-group-f-01": {
       "status": "live",
+      "datetime": "2026-06-14T20:00:00Z",
       "score": {
-        "home": 0,
+        "home": 1,
         "away": 0
       }
     }

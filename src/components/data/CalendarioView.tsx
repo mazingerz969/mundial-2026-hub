@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { MatchRow } from "@/components/data/MatchRow";
 import { useSettings } from "@/components/providers/SettingsProvider";
@@ -19,8 +18,15 @@ import {
 type DateFilter = "all" | "today" | "tomorrow" | "week";
 type StatusFilter = "all" | Match["status"];
 
-export function CalendarioView() {
-  const searchParams = useSearchParams();
+interface CalendarioViewProps {
+  initialMatchId?: string | null;
+  initialVenueId?: string | null;
+}
+
+export function CalendarioView({
+  initialMatchId = null,
+  initialVenueId = null,
+}: CalendarioViewProps) {
   const { settings } = useSettings();
   const matches = useLiveMatches();
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
@@ -29,17 +35,18 @@ export function CalendarioView() {
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [favoriteOnly, setFavoriteOnly] = useState(false);
-  const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(initialMatchId);
 
   useEffect(() => {
-    const matchId = searchParams.get("match");
-    const venueId = searchParams.get("venue");
-    if (matchId) setHighlightId(matchId);
-    if (venueId) {
-      const match = matches.find((m) => m.venueId === venueId);
+    if (initialMatchId) {
+      setHighlightId(initialMatchId);
+      return;
+    }
+    if (initialVenueId) {
+      const match = matches.find((m) => m.venueId === initialVenueId);
       if (match) setHighlightId(match.id);
     }
-  }, [searchParams, matches]);
+  }, [initialMatchId, initialVenueId, matches]);
 
   const filtered = useMemo(() => {
     const tz = settings.timezone;
@@ -63,7 +70,10 @@ export function CalendarioView() {
         if (statusFilter !== "all" && m.status !== statusFilter) return false;
 
         if (dateFilter === "today") {
-          return getDateKeyInTimezone(m.datetime, tz) === today;
+          return (
+            m.status === "live" ||
+            getDateKeyInTimezone(m.datetime, tz) === today
+          );
         }
         if (dateFilter === "tomorrow") {
           return getDateKeyInTimezone(m.datetime, tz) === tomorrow;

@@ -231,7 +231,10 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
       continue;
     }
 
-    const patch: Record<string, unknown> = { status };
+    const patch: Record<string, unknown> = {
+      status,
+      datetime: api.utcDate,
+    };
 
     if (home != null && away != null) {
       patch.score = { home, away };
