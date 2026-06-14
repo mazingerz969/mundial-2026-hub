@@ -2,25 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, ClipboardList, Gamepad2, Home, Shield } from "lucide-react";
 
-const navItems = [
-  { href: "/", label: "Inicio", icon: Home },
-  { href: "/equipos", label: "Equipos", icon: Shield },
-  { href: "/calendario", label: "Calend.", icon: Calendar },
-  { href: "/quiniela", label: "Quiniela", icon: ClipboardList },
-  { href: "/juegos", label: "Juegos", icon: Gamepad2 },
-];
+import {
+  isNavItemActive,
+  mainNavItems,
+} from "@/components/layout/nav-items";
 
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-bg-secondary md:hidden">
+    <nav
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-bg-secondary md:hidden"
+      aria-label="Principal"
+    >
       <div className="mx-auto flex max-w-5xl justify-around px-2 py-2">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const active =
-            href === "/" ? pathname === "/" : pathname.startsWith(href);
+        {mainNavItems.map(({ href, label, icon: Icon }) => {
+          const active = isNavItemActive(pathname, href);
 
           return (
             <Link
@@ -33,7 +31,7 @@ export function BottomNav() {
               }`}
             >
               <Icon className="h-5 w-5" strokeWidth={active ? 2.5 : 2} />
-              <span>{label}</span>
+              <span>{href === "/calendario" ? "Calend." : label}</span>
             </Link>
           );
         })}
