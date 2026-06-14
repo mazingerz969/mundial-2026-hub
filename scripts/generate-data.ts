@@ -355,28 +355,30 @@ function roundRobin(group: string, teamIds: string[]): MatchSeed[] {
 }
 
 function assignGroupDates(matches: MatchSeed[], venues: VenueSeed[]): void {
-  const mdDates: Record<number, string> = {
-    1: "2026-06-11",
-    2: "2026-06-19",
-    3: "2026-06-26",
+  const mdWindows: Record<number, string[]> = {
+    1: ["2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14", "2026-06-15", "2026-06-16"],
+    2: ["2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"],
+    3: ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27"],
   };
-  const hours = [14, 17, 20];
+  const kickoffUtc = ["17:00:00Z", "20:00:00Z", "23:00:00Z", "02:00:00Z"];
 
-  matches.forEach((m, idx) => {
-    if (!m.matchday) return;
-    const venue = venues[idx % venues.length]!;
-    const date = mdDates[m.matchday] ?? "2026-06-15";
-    const hour = hours[idx % hours.length]!;
-    const offset = venue.timezone.includes("Los_Angeles")
-      ? "-07:00"
-      : venue.timezone.includes("Toronto") || venue.timezone.includes("New_York")
-        ? "-04:00"
-        : venue.timezone.includes("Chicago")
-          ? "-05:00"
-          : "-06:00";
-    m.venueId = venue.id;
-    m.datetime = `${date}T${String(hour).padStart(2, "0")}:00:00${offset}`;
-  });
+  const byMatchday: Record<number, MatchSeed[]> = { 1: [], 2: [], 3: [] };
+  for (const m of matches) {
+    if (m.matchday) byMatchday[m.matchday]!.push(m);
+  }
+
+  for (const md of [1, 2, 3] as const) {
+    const window = mdWindows[md]!;
+    const list = byMatchday[md]!.sort((a, b) => a.id.localeCompare(b.id));
+
+    list.forEach((m, idx) => {
+      const venue = venues[idx % venues.length]!;
+      const day = window[idx % window.length]!;
+      const time = kickoffUtc[idx % kickoffUtc.length]!;
+      m.venueId = venue.id;
+      m.datetime = `${day}T${time}`;
+    });
+  }
 }
 
 function isoDatetime(date: string, hour: number, offset = "-04:00"): string {

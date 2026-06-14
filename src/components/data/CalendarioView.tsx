@@ -6,7 +6,7 @@ import { MatchRow } from "@/components/data/MatchRow";
 import { useSettings } from "@/components/providers/SettingsProvider";
 import { useLiveMatches } from "@/components/providers/LiveDataProvider";
 import { GROUPS, PHASE_LABELS } from "@/lib/constants/labels";
-import { getTeamById, teams } from "@/lib/data";
+import { getTeamById, realTeams as teams } from "@/lib/data";
 import type { Match } from "@/lib/schemas";
 import {
   getDateKeyInTimezone,

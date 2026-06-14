@@ -1,4 +1,5 @@
-import { challenges, players, teams } from "@/lib/data";
+import { challenges, players, realTeams as teams } from "@/lib/data";
+import { getPlayerCost } from "@/lib/games/reto11/cost";
 import type { Challenge, Player } from "@/lib/schemas";
 
 export function getEligiblePlayers(challenge: Challenge): Player[] {
@@ -22,7 +23,7 @@ export function getEligiblePlayers(challenge: Challenge): Player[] {
     pool = pool.filter((p) => !excluded.has(p.id));
   }
 
-  return pool.sort((a, b) => b.rating - a.rating);
+  return pool.sort((a, b) => getPlayerCost(b) - getPlayerCost(a));
 }
 
 export function canFieldEleven(challenge: Challenge): boolean {

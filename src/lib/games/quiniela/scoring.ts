@@ -1,17 +1,20 @@
 import type { Match } from "@/lib/schemas";
 import type { QuinielaResults } from "@/lib/games/quiniela/types";
 
+import { getFirstKickoffTime } from "./match-groups";
+
 export function isMatchPredictionLocked(match: Match, now = Date.now()): boolean {
   if (match.status !== "scheduled") return true;
   return new Date(match.datetime).getTime() <= now;
 }
 
 export function areAwardsLocked(
-  tournamentStartDate: string,
+  matches: Match[],
   now = Date.now(),
 ): boolean {
-  const start = new Date(`${tournamentStartDate}T00:00:00Z`).getTime();
-  return now >= start;
+  const firstKickoff = getFirstKickoffTime(matches);
+  if (firstKickoff == null) return false;
+  return now >= firstKickoff;
 }
 
 export function getMatchOutcome(home: number, away: number): "H" | "D" | "A" {
@@ -75,12 +78,14 @@ export function scoreTopScorers(
   picks: string[],
   official: QuinielaResults["topScorers"],
 ): number {
-  if (official.length === 0 || picks.length === 0) return 0;
+  const filled = picks.filter(Boolean);
+  if (official.length === 0 || filled.length === 0) return 0;
 
   const officialIds = official.map((e) => e.playerId);
   let points = 0;
 
   picks.forEach((playerId, index) => {
+    if (!playerId) return;
     const officialRank = officialIds.indexOf(playerId);
     if (officialRank === -1) return;
 

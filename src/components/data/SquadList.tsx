@@ -6,7 +6,7 @@ import { PlayerRow } from "@/components/data/PlayerRow";
 import { POSITION_LABELS } from "@/lib/constants/labels";
 import type { Player, Position } from "@/lib/schemas";
 
-type SortOption = "rating" | "number" | "name";
+type SortOption = "number" | "name" | "position";
 
 interface SquadListProps {
   players: Player[];
@@ -16,7 +16,7 @@ const POSITIONS: (Position | "ALL")[] = ["ALL", "GK", "DF", "MF", "FW"];
 
 export function SquadList({ players }: SquadListProps) {
   const [positionFilter, setPositionFilter] = useState<Position | "ALL">("ALL");
-  const [sortBy, setSortBy] = useState<SortOption>("rating");
+  const [sortBy, setSortBy] = useState<SortOption>("number");
 
   const filtered = useMemo(() => {
     let list = [...players];
@@ -31,11 +31,16 @@ export function SquadList({ players }: SquadListProps) {
           (a, b) => (a.number ?? 999) - (b.number ?? 999),
         );
         break;
-      case "name":
-        list.sort((a, b) => a.name.localeCompare(b.name, "es"));
+      case "position":
+        list.sort((a, b) => {
+          const posOrder = { GK: 0, DF: 1, MF: 2, FW: 3 };
+          const posDiff = posOrder[a.position] - posOrder[b.position];
+          if (posDiff !== 0) return posDiff;
+          return a.name.localeCompare(b.name, "es");
+        });
         break;
       default:
-        list.sort((a, b) => b.rating - a.rating);
+        list.sort((a, b) => a.name.localeCompare(b.name, "es"));
     }
 
     return list;
@@ -73,9 +78,9 @@ export function SquadList({ players }: SquadListProps) {
           className="ml-auto rounded-lg border border-border bg-bg-secondary px-3 py-1 text-xs"
           aria-label="Ordenar plantilla"
         >
-          <option value="rating">Por rating</option>
           <option value="number">Por dorsal</option>
           <option value="name">Por nombre</option>
+          <option value="position">Por posición</option>
         </select>
       </div>
 

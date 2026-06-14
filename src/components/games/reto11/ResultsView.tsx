@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Flag } from "@/components/data/Flag";
 import { getTeamById } from "@/lib/data";
+import { getPlayerCost } from "@/lib/games/reto11/cost";
 import type { ScoreResult } from "@/lib/games/reto11/score";
 import type { Challenge, Player } from "@/lib/schemas";
 
@@ -77,7 +78,7 @@ export function ResultsView({
         <h3 className="font-medium">Desglose</h3>
         <ul className="mt-3 space-y-2 text-sm">
           <li className="flex justify-between">
-            <span className="text-text-secondary">Base (ratings)</span>
+            <span className="text-text-secondary">Base (coste once)</span>
             <span className="font-medium tabular-nums">{score.base}</span>
           </li>
           {score.bonuses.map((b) => (
@@ -95,7 +96,7 @@ export function ResultsView({
         <h3 className="mb-3 font-medium">Tu once</h3>
         <ul className="space-y-2">
           {players
-            .sort((a, b) => b.rating - a.rating)
+            .sort((a, b) => getPlayerCost(b) - getPlayerCost(a))
             .map((p) => {
               const team = getTeamById(p.teamId);
               return (
@@ -110,7 +111,9 @@ export function ResultsView({
                     <span>{p.name}</span>
                     <span className="text-text-secondary">{p.position}</span>
                   </div>
-                  <span className="font-semibold tabular-nums">{p.rating}</span>
+                  <span className="font-semibold tabular-nums">
+                    {getPlayerCost(p)} pts
+                  </span>
                 </li>
               );
             })}

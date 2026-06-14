@@ -7,7 +7,7 @@ import { Flag } from "@/components/data/Flag";
 import { useSettings } from "@/components/providers/SettingsProvider";
 import { TIMEZONE_OPTIONS } from "@/lib/constants/labels";
 import { detectTimezone } from "@/lib/storage/settings";
-import { getTeamById, teams } from "@/lib/data";
+import { getTeamById, realTeams as teams } from "@/lib/data";
 
 export function SettingsView() {
   const {

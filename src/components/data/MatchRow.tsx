@@ -64,6 +64,11 @@ export function MatchRow({
         <span>{compact ? dateTimeLabel : dateTimeLabel}</span>
         <div className="flex items-center gap-2">
           <span>{PHASE_LABELS[match.phase] ?? match.phase}</span>
+          {match.status === "live" && match.minute != null && (
+            <span className="rounded-full bg-accent-green/20 px-2 py-0.5 text-xs font-semibold tabular-nums text-accent-green">
+              {match.minute}&apos;
+            </span>
+          )}
           <StatusBadge status={match.status} />
         </div>
       </div>

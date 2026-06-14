@@ -129,12 +129,12 @@ export function PlayerPicker({
                           {cost} pts
                         </span>
                         <span className="mt-0.5 block text-[10px] tabular-nums text-text-secondary">
-                          {player.rating} OVR
+                          coste mercado
                         </span>
                       </>
                     ) : (
                       <span className="rounded bg-bg-elevated px-2 py-0.5 text-sm font-semibold tabular-nums">
-                        {player.rating}
+                        {cost}
                       </span>
                     )}
                   </div>

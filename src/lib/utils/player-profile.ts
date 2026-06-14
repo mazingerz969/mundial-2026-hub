@@ -30,6 +30,22 @@ export function formatWeight(weightKg: number | undefined): string | null {
   return `${weightKg} kg`;
 }
 
+export function formatMarketValue(euros: number | undefined): string | null {
+  if (euros == null || euros <= 0) return null;
+  if (euros >= 1_000_000) {
+    const millions = euros / 1_000_000;
+    const formatted =
+      millions >= 10
+        ? Math.round(millions).toString()
+        : millions.toFixed(1).replace(".", ",");
+    return `${formatted} M€`;
+  }
+  if (euros >= 1_000) {
+    return `${Math.round(euros / 1_000)} K€`;
+  }
+  return `${euros} €`;
+}
+
 export function getBirthYear(
   player: Pick<Player, "birthDate" | "age">,
 ): number | null {

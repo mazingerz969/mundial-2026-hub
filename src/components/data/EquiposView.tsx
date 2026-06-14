@@ -8,10 +8,40 @@ import {
   CONFEDERATION_LABELS,
   GROUPS,
 } from "@/lib/constants/labels";
-import { teams } from "@/lib/data";
+import { realTeams as teams } from "@/lib/data";
 import type { Team } from "@/lib/schemas";
 
 type SortOption = "group" | "name" | "ranking";
+
+function TeamGrid({
+  list,
+  favoriteTeamId,
+  hideGroup,
+  columns = "default",
+}: {
+  list: Team[];
+  favoriteTeamId: string | null;
+  hideGroup?: boolean;
+  columns?: "default" | "group";
+}) {
+  const gridClass =
+    columns === "group"
+      ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+      : "grid gap-3 sm:grid-cols-2 lg:grid-cols-3";
+
+  return (
+    <div className={gridClass}>
+      {list.map((team) => (
+        <TeamCard
+          key={team.id}
+          team={team}
+          isFavorite={favoriteTeamId === team.id}
+          hideGroup={hideGroup}
+        />
+      ))}
+    </div>
+  );
+}
 
 export function EquiposView() {
   const { settings } = useSettings();
@@ -53,6 +83,20 @@ export function EquiposView() {
 
     return list;
   }, [groupFilter, confederationFilter, sortBy]);
+
+  const groupSections = useMemo(() => {
+    if (sortBy !== "group") return [];
+
+    const letters = groupFilter ? [groupFilter] : GROUPS;
+    return letters
+      .map((group) => ({
+        group,
+        teams: filtered.filter((t) => t.group === group),
+      }))
+      .filter((section) => section.teams.length > 0);
+  }, [filtered, sortBy, groupFilter]);
+
+  const showGroupSections = sortBy === "group" && !groupFilter;
 
   return (
     <div className="space-y-6">
@@ -120,20 +164,36 @@ export function EquiposView() {
         ))}
       </div>
 
-      {filtered.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((team: Team) => (
-            <TeamCard
-              key={team.id}
-              team={team}
-              isFavorite={settings.favoriteTeamId === team.id}
-            />
-          ))}
-        </div>
-      ) : (
+      {filtered.length === 0 ? (
         <p className="rounded-xl border border-border bg-bg-secondary px-4 py-8 text-center text-sm text-text-secondary">
           Ningún equipo coincide con los filtros.
         </p>
+      ) : showGroupSections ? (
+        <div className="space-y-8">
+          {groupSections.map(({ group, teams: groupTeams }) => (
+            <section key={group}>
+              <div className="mb-3 flex items-baseline gap-2">
+                <h2 className="text-lg font-semibold">Grupo {group}</h2>
+                <span className="text-sm text-text-secondary">
+                  {groupTeams.length} equipos
+                </span>
+              </div>
+              <TeamGrid
+                list={groupTeams}
+                favoriteTeamId={settings.favoriteTeamId}
+                hideGroup
+                columns="group"
+              />
+            </section>
+          ))}
+        </div>
+      ) : (
+        <TeamGrid
+          list={filtered}
+          favoriteTeamId={settings.favoriteTeamId}
+          hideGroup={sortBy === "group" && groupFilter !== null}
+          columns={sortBy === "group" ? "group" : "default"}
+        />
       )}
     </div>
   );

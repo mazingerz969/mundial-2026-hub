@@ -10,6 +10,7 @@ import type { Player } from "@/lib/schemas";
 import {
   formatBirthDate,
   formatHeight,
+  formatMarketValue,
   formatWeight,
   getBirthYear,
 } from "@/lib/utils/player-profile";
@@ -24,16 +25,14 @@ function StatCard({
   value,
 }: {
   label: string;
-  value: string | number | null | undefined;
+  value: string | number;
 }) {
   return (
     <div className="rounded-xl border border-border bg-bg-secondary p-4">
       <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">
         {label}
       </p>
-      <p className="mt-1 text-lg font-semibold tabular-nums">
-        {value ?? "—"}
-      </p>
+      <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
     </div>
   );
 }
@@ -43,6 +42,51 @@ export function PlayerProfile({ player }: PlayerProfileProps) {
   const accent = getTeamAccentColor(team?.primaryColor);
   const birthYear = getBirthYear(player);
   const birthDateLabel = formatBirthDate(player.birthDate);
+  const marketValueLabel = formatMarketValue(player.marketValueEuros);
+
+  const stats: { label: string; value: string | number }[] = [];
+
+  if (player.number != null) {
+    stats.push({ label: "Dorsal", value: player.number });
+  }
+  stats.push({
+    label: "Posición",
+    value: POSITION_LABELS[player.position] ?? player.position,
+  });
+  if (player.detailedPosition) {
+    stats.push({ label: "Rol", value: player.detailedPosition });
+  }
+  if (player.age != null) {
+    stats.push({ label: "Edad", value: `${player.age} años` });
+  }
+  if (birthYear != null) {
+    stats.push({ label: "Año de nacimiento", value: birthYear });
+  }
+  if (birthDateLabel) {
+    stats.push({ label: "Fecha de nacimiento", value: birthDateLabel });
+  }
+  if (player.nationality) {
+    stats.push({ label: "Nacionalidad", value: player.nationality });
+  }
+  if (player.club) {
+    stats.push({ label: "Club", value: player.club });
+  }
+  if (marketValueLabel) {
+    stats.push({ label: "Valor de mercado", value: marketValueLabel });
+  }
+
+  const heightLabel = formatHeight(player.heightCm);
+  if (heightLabel) stats.push({ label: "Altura", value: heightLabel });
+
+  const weightLabel = formatWeight(player.weightKg);
+  if (weightLabel) stats.push({ label: "Peso", value: weightLabel });
+
+  if (player.preferredFoot) {
+    stats.push({
+      label: "Pierna hábil",
+      value: FOOT_LABELS[player.preferredFoot],
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -85,9 +129,6 @@ export function PlayerProfile({ player }: PlayerProfileProps) {
                     {player.detailedPosition}
                   </span>
                 )}
-                <span className="rounded-md bg-bg-elevated px-2.5 py-1 text-sm font-semibold tabular-nums">
-                  {player.rating} OVR
-                </span>
               </div>
 
               {team && (
@@ -105,28 +146,22 @@ export function PlayerProfile({ player }: PlayerProfileProps) {
       </div>
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold">Datos personales</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <StatCard label="Edad" value={player.age != null ? `${player.age} años` : null} />
-          <StatCard label="Año de nacimiento" value={birthYear} />
-          <StatCard label="Fecha de nacimiento" value={birthDateLabel} />
-          <StatCard label="Altura" value={formatHeight(player.heightCm)} />
-          <StatCard label="Peso" value={formatWeight(player.weightKg)} />
-          <StatCard
-            label="Pierna hábil"
-            value={
-              player.preferredFoot
-                ? FOOT_LABELS[player.preferredFoot]
-                : null
-            }
-          />
-          <StatCard
-            label="Posición"
-            value={POSITION_LABELS[player.position] ?? player.position}
-          />
-          <StatCard label="Nacionalidad" value={player.nationality} />
-          <StatCard label="Club" value={player.club} />
-        </div>
+        <h2 className="mb-4 text-lg font-semibold">Datos del jugador</h2>
+        {stats.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {stats.map((stat) => (
+              <StatCard key={stat.label} label={stat.label} value={stat.value} />
+            ))}
+          </div>
+        ) : (
+          <p className="rounded-xl border border-border bg-bg-secondary px-4 py-6 text-sm text-text-secondary">
+            Solo tenemos el nombre y la selección de este jugador por ahora.
+          </p>
+        )}
+        <p className="mt-4 text-xs text-text-secondary">
+          Fuente: football-data.org. No mostramos nota OVR ni medidas físicas si la
+          API no las publica — no inventamos datos.
+        </p>
       </section>
     </div>
   );

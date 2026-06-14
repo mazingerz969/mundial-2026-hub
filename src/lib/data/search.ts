@@ -1,5 +1,5 @@
 import type { Match, Player, Position, Team, Venue } from "@/lib/schemas";
-import { matches, players, teams, venues } from "@/lib/data";
+import { matches, players, realTeams as teams, venues } from "@/lib/data";
 import { PHASE_LABELS } from "@/lib/constants/labels";
 
 export type SearchResultType = "team" | "player" | "match" | "venue";

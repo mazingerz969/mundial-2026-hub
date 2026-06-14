@@ -19,6 +19,7 @@ import { QuinielaResultsSchema } from "@/lib/games/quiniela/types";
 
 export const tournament = TournamentSchema.parse(tournamentData);
 export const teams = TeamsArraySchema.parse(teamsData);
+export const realTeams = teams.filter((t) => !t.id.startsWith("tbd-"));
 export const players = PlayersArraySchema.parse(playersData);
 export const matches = MatchesArraySchema.parse(matchesData);
 export const venues = VenuesArraySchema.parse(venuesData);
@@ -75,7 +76,7 @@ export function getMatchesToday() {
 
 export function getStats() {
   return {
-    teamCount: teams.length,
+    teamCount: realTeams.length,
     playerCount: players.length,
     matchCount: matches.length,
     venueCount: venues.length,

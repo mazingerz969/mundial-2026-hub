@@ -16,14 +16,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
 
 import { LiveOverridesSchema } from "../src/lib/data/live-types";
-import {
-  buildTeamIdLookup,
-  findLocalMatchId,
-  loadMatches,
-  loadTeams,
-  resolveTeamId,
-  utcDateKey,
-} from "./lib/team-mapping";
+import { loadMatches } from "./lib/team-mapping";
 
 const DATA_DIR = join(process.cwd(), "data");
 const OVERRIDES_PATH = join(DATA_DIR, "live-overrides.json");
@@ -172,9 +165,7 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
     process.exit(0);
   }
 
-  const teams = loadTeams();
   const localMatches = loadMatches();
-  const lookup = buildTeamIdLookup(teams);
   const overrides = loadOverrides();
   overrides.matches ??= {};
 
@@ -183,36 +174,13 @@ Nota: No usamos IA para marcadores — alucinan resultados falsos.
   let unmapped = 0;
 
   for (const api of apiMatches) {
-    const homeId = resolveTeamId(lookup, [
-      api.homeTeam.name ?? "",
-      api.homeTeam.shortName ?? "",
-      api.homeTeam.tla ?? "",
-    ]);
-    const awayId = resolveTeamId(lookup, [
-      api.awayTeam.name ?? "",
-      api.awayTeam.shortName ?? "",
-      api.awayTeam.tla ?? "",
-    ]);
+    const localId = `fd-${api.id}`;
+    const exists = localMatches.some((m) => m.id === localId);
 
-    if (!homeId || !awayId) {
+    if (!exists) {
       unmapped++;
       console.log(
-        `⚠ Sin mapeo local: ${api.homeTeam.name ?? "?"} vs ${api.awayTeam.name ?? "?"}`,
-      );
-      continue;
-    }
-
-    const localId = findLocalMatchId(
-      localMatches,
-      homeId,
-      awayId,
-      utcDateKey(api.utcDate),
-    );
-
-    if (!localId) {
-      unmapped++;
-      console.log(
-        `⚠ Sin partido en matches.json: ${api.homeTeam.name} vs ${api.awayTeam.name} (${utcDateKey(api.utcDate)})`,
+        `⚠ Sin partido en matches.json: ${api.homeTeam.name ?? "?"} vs ${api.awayTeam.name ?? "?"} (fd-${api.id})`,
       );
       continue;
     }

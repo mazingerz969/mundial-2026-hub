@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Flag } from "@/components/data/Flag";
 import { PhaserGoalView } from "@/components/games/tanda90/PhaserGoalView";
 import { PowerBar } from "@/components/games/tanda90/PowerBar";
-import { getTeamById, teams } from "@/lib/data";
+import { getTeamById, realTeams as teams } from "@/lib/data";
 import {
   applyShotResult,
   cpuKeeperChoice,

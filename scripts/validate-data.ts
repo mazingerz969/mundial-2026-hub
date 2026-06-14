@@ -104,6 +104,7 @@ function main(): void {
 
   const groupCounts = new Map<string, number>();
   for (const team of teams) {
+    if (team.id.startsWith("tbd-")) continue;
     groupCounts.set(team.group, (groupCounts.get(team.group) ?? 0) + 1);
   }
   for (const [group, count] of groupCounts) {
@@ -127,6 +128,7 @@ function main(): void {
   }
   let teamsUnder26 = 0;
   for (const team of teams) {
+    if (team.id.startsWith("tbd-")) continue;
     const count = playersByTeamCount.get(team.id) ?? 0;
     if (count < 11) {
       errors.push(`Equipo "${team.name}": solo ${count} jugadores (mínimo 11)`);

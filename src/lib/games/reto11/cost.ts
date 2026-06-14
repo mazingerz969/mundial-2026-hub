@@ -2,10 +2,14 @@ import type { Player } from "@/lib/schemas";
 
 /**
  * Coste de mercado para retos con presupuesto.
- * Escala el rating (55–92) a un rango jugable (~1–13) para presupuestos ~100.
+ * Usa valor de mercado real cuando existe; si no, coste base igual para todos.
  */
 export function getPlayerCost(player: Player): number {
-  return Math.max(1, Math.round((player.rating - 52) / 3));
+  const value = player.marketValueEuros;
+  if (value != null && value > 0) {
+    return Math.max(1, Math.min(15, Math.round(Math.log10(value) * 2.5 - 2)));
+  }
+  return 4;
 }
 
 export function getLineupCost(players: Player[]): number {

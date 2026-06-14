@@ -11,7 +11,7 @@ import {
 } from "@/components/games/reto11/Pitch";
 import { ResultsView } from "@/components/games/reto11/ResultsView";
 import { useSettings } from "@/components/providers/SettingsProvider";
-import { challenges, players, teams } from "@/lib/data";
+import { challenges, players, realTeams as teams } from "@/lib/data";
 import { getDailyChallenge, getDailyDateKey } from "@/lib/games/reto11/daily";
 import { describeChallengeRules } from "@/lib/games/reto11/describe-rules";
 import {

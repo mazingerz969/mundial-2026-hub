@@ -1,4 +1,4 @@
-import { matches, players, teams, venues } from "@/lib/data";
+import { matches, players, realTeams as teams, venues } from "@/lib/data";
 import { getTeamById } from "@/lib/data";
 import { POSITION_LABELS } from "@/lib/constants/labels";
 import type { TriviaQuestion, TriviaQuestionType } from "./types";

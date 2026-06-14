@@ -11,7 +11,7 @@ import {
   getTeamById,
   players,
   sortPlayersBySquad,
-  teams,
+  realTeams,
 } from "@/lib/data";
 import type { Player } from "@/lib/schemas";
 
@@ -97,7 +97,7 @@ export function PlayerSearchSelect({
   const exclude = useMemo(() => new Set(excludePlayerIds), [excludePlayerIds]);
 
   const sortedTeams = useMemo(
-    () => [...teams].sort((a, b) => a.name.localeCompare(b.name, "es")),
+    () => [...realTeams].sort((a, b) => a.name.localeCompare(b.name, "es")),
     [],
   );
 

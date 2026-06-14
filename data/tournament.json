@@ -1,6 +1,6 @@
 {
   "id": "fifa-world-cup-2026",
-  "name": "FIFA World Cup 2026",
+  "name": "FIFA World Cup",
   "shortName": "Mundial 2026",
   "hostCountries": [
     "Estados Unidos",
@@ -12,6 +12,6 @@
   "teamCount": 48,
   "timezoneDefault": "America/Mexico_City",
   "currentPhase": "group",
-  "dataVersion": 2,
-  "lastUpdated": "2026-06-09"
+  "dataVersion": 3,
+  "lastUpdated": "2026-06-14"
 }

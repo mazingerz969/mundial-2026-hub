@@ -2,6 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PlayerProfile } from "@/components/data/PlayerProfile";
+import {
+  fetchPlayerEnrichment,
+  mergePlayerWithEnrichment,
+} from "@/lib/data/fetch-player-enrichment";
 import { getPlayerById, getTeamById } from "@/lib/data";
 
 interface PlayerPageProps {
@@ -16,6 +20,9 @@ export default async function PlayerDetailPage({ params }: PlayerPageProps) {
   if (!team || !player || player.teamId !== teamId) {
     notFound();
   }
+
+  const enrichment = await fetchPlayerEnrichment(playerId);
+  const displayPlayer = mergePlayerWithEnrichment(player, enrichment);
 
   return (
     <div className="space-y-6">
@@ -35,7 +42,7 @@ export default async function PlayerDetailPage({ params }: PlayerPageProps) {
         </Link>
       </div>
 
-      <PlayerProfile player={player} />
+      <PlayerProfile player={displayPlayer} />
     </div>
   );
 }

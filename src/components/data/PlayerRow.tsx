@@ -38,15 +38,14 @@ export function PlayerRow({ player }: PlayerRowProps) {
           </p>
           <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-text-secondary">
             <PositionBadge position={player.position} />
+            {player.detailedPosition ? (
+              <span className="truncate">{player.detailedPosition}</span>
+            ) : null}
             {player.club ? <span className="truncate">{player.club}</span> : null}
+            {player.age != null ? <span>{player.age} años</span> : null}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <span className="rounded-md bg-bg-elevated px-2.5 py-1 text-sm font-semibold tabular-nums">
-            {player.rating}
-          </span>
-          <ChevronRight className="h-4 w-4 text-text-secondary transition-transform group-hover:translate-x-0.5" />
-        </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-text-secondary transition-transform group-hover:translate-x-0.5" />
       </Link>
     </li>
   );

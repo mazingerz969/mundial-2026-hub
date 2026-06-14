@@ -79,7 +79,10 @@ export const PlayerSchema = z.object({
   heightCm: z.number().int().min(150).max(210).optional(),
   weightKg: z.number().int().min(55).max(110).optional(),
   preferredFoot: PreferredFootSchema.optional(),
-  rating: z.number().int().min(1).max(99),
+  /** Valor de mercado en euros (football-data.org). No implica nivel en el campo. */
+  marketValueEuros: z.number().int().min(0).optional(),
+  /** Legacy / minijuegos — no mostrar como OVR en fichas si falta. */
+  rating: z.number().int().min(1).max(99).optional(),
   nationality: z.string().optional(),
   isKeyPlayer: z.boolean().optional(),
 });
@@ -110,6 +113,8 @@ export const MatchSchema = z.object({
   status: MatchStatusSchema,
   score: ScoreSchema.nullable().optional(),
   penaltyScore: ScoreSchema.nullable().optional(),
+  /** Minuto en juego — solo en runtime vía API live. */
+  minute: z.number().int().min(0).max(130).optional(),
 });
 
 export const RequiredPositionsSchema = z.object({

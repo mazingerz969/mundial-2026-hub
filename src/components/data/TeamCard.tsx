@@ -8,9 +8,10 @@ import { getTeamAccentColor } from "@/lib/utils/player-avatar";
 interface TeamCardProps {
   team: Team;
   isFavorite?: boolean;
+  hideGroup?: boolean;
 }
 
-export function TeamCard({ team, isFavorite }: TeamCardProps) {
+export function TeamCard({ team, isFavorite, hideGroup }: TeamCardProps) {
   const accent = getTeamAccentColor(team.primaryColor);
 
   return (
@@ -44,7 +45,7 @@ export function TeamCard({ team, isFavorite }: TeamCardProps) {
             </span>
           </div>
           <p className="mt-1 text-sm text-text-secondary">
-            Grupo {team.group} · #{team.fifaRanking} FIFA
+            {hideGroup ? `#${team.fifaRanking} FIFA` : `Grupo ${team.group} · #${team.fifaRanking} FIFA`}
           </p>
           <p className="mt-2 truncate text-xs text-text-secondary">
             {team.coach}

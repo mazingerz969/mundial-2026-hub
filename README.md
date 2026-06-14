@@ -81,70 +81,32 @@ Añade 2–3 capturas (móvil): inicio, quiniela y ficha de jugador.
 
 ## Actualizar resultados en vivo
 
-Durante el torneo **no hace falta redeployar toda la app** para cada partido.
+Durante el torneo **no hace falta redeployar** ni hacer `git push` por cada gol.
 
-### Cómo funciona
+### Cómo funciona (automático)
 
-1. El calendario base vive en `data/matches.json` (horarios, equipos).
-2. Los **resultados y stats oficiales** se parchean en `data/live-overrides.json`.
-3. La web consulta `/api/live` cada ~2 min y fusiona ambos.
+1. Calendario base en `data/matches.json`.
+2. **`/api/live`** consulta football-data.org cada ~60 s (caché compartida) y fusiona marcadores, estado y minuto.
+3. El navegador refresca cada **30 s** si hay partidos en juego, cada **5 min** si no.
+4. **Vercel Cron** (`/api/cron/sync-live`, cada 2 min) invalida la caché aunque nadie entre en la web.
 
-### Actualizar un partido (CLI)
+### Variables en Vercel
 
-```bash
-# Partido terminado
-npm run update-match -- match-group-a-01 2 1 finished
+| Variable | Obligatoria | Uso |
+|----------|-------------|-----|
+| `FOOTBALL_DATA_API_KEY` | Sí | Token de football-data.org |
+| `CRON_SECRET` | Sí | Protege el endpoint del cron (`openssl rand -hex 32`) |
 
-# En directo
-npm run update-match -- match-group-a-02 --live 1 0
+`LIVE_DATA_URL` ya **no es necesaria** para marcadores — solo si quieres parches manuales de quiniela (MVP, goleadores) vía JSON en GitHub.
 
-# Con penaltis
-npm run update-match -- match-r32-01 1 1 finished --penalties 4 3
-
-# MVP oficial del partido (quiniela)
-npm run update-match -- --mvp match-group-a-01 emiliano-martinez
-
-# Tabla de goleadores
-npm run update-match -- --scorer lionel-messi 3
-
-# Cambiar fase del torneo
-npm run update-match -- --phase round_of_16
-```
-
-Luego:
+### Manual (backup)
 
 ```bash
-git add data/live-overrides.json
-git commit -m "update live results"
-git push
+npm run sync-results         # escribe data/live-overrides.json (backup / quiniela)
+npm run update-match -- fd-537327 2 1 finished
 ```
 
-### Sincronizar desde API (recomendado)
-
-Registro gratis en [football-data.org](https://www.football-data.org/client/register):
-
-```bash
-cp .env.example .env.local   # pega FOOTBALL_DATA_API_KEY
-npm run sync-results         # trae marcadores reales del Mundial
-npm run sync-results -- --dry-run   # vista previa sin escribir
-```
-
-**No usamos IA para marcadores** — alucinan resultados igual que datos inventados.
-
-### Importante
-
-| Método | Uso |
-|--------|-----|
-| `npm run sync-results` | Automático desde football-data.org |
-| `npm run update-match` | Manual, cuando verificas el marcador tú mismo |
-
-En Vercel → Environment Variables:
-
-| Variable | Valor |
-|----------|--------|
-| `LIVE_DATA_URL` | `https://raw.githubusercontent.com/mazingerz969/mundial-2026-hub/main/data/live-overrides.json` |
-
-Tras cada `git push` de `live-overrides.json`, la web se actualiza sola en ~1–2 min.
+**No usamos IA para marcadores.**
 
 
 ## Licencia

@@ -5,6 +5,10 @@ import tournamentData from "@/data/tournament.json";
 
 import { QuinielaResultsSchema } from "@/lib/games/quiniela/types";
 import {
+  getCachedFootballDataLive,
+  type ApiLivePatch,
+} from "@/lib/data/football-data-live";
+import {
   LiveOverridesSchema,
   type LiveOverrides,
   type MatchOverride,
@@ -27,21 +31,38 @@ export type LiveSnapshot = {
   tournament: Tournament;
   quinielaResults: QuinielaResults;
   updatedAt: string | null;
-  source: "embedded" | "remote" | "merged";
+  source: "embedded" | "remote" | "api" | "merged";
+  liveMatchCount: number;
 };
 
-function applyMatchOverride(match: Match, override?: MatchOverride): Match {
-  if (!override) return match;
+function applyMatchOverride(
+  match: Match,
+  override?: MatchOverride,
+  apiPatch?: ApiLivePatch,
+): Match {
+  const merged: Match = { ...match };
 
-  return {
-    ...match,
-    ...(override.status !== undefined ? { status: override.status } : {}),
-    ...(override.score !== undefined ? { score: override.score } : {}),
-    ...(override.penaltyScore !== undefined
-      ? { penaltyScore: override.penaltyScore }
-      : {}),
-    ...(override.datetime !== undefined ? { datetime: override.datetime } : {}),
-  };
+  if (override) {
+    if (override.status !== undefined) merged.status = override.status;
+    if (override.score !== undefined) merged.score = override.score;
+    if (override.penaltyScore !== undefined) {
+      merged.penaltyScore = override.penaltyScore;
+    }
+    if (override.datetime !== undefined) merged.datetime = override.datetime;
+  }
+
+  if (apiPatch) {
+    if (apiPatch.status !== undefined) merged.status = apiPatch.status;
+    if (apiPatch.score !== undefined) merged.score = apiPatch.score;
+    if (apiPatch.penaltyScore !== undefined) {
+      merged.penaltyScore = apiPatch.penaltyScore;
+    }
+    if (apiPatch.datetime !== undefined) merged.datetime = apiPatch.datetime;
+    if (apiPatch.minute != null) merged.minute = apiPatch.minute;
+    else if (merged.status !== "live") delete merged.minute;
+  }
+
+  return merged;
 }
 
 export function applyLiveOverrides(
@@ -49,10 +70,15 @@ export function applyLiveOverrides(
   matches: Match[] = baseMatches,
   tournament: Tournament = baseTournament,
   quinielaResults: QuinielaResults = baseQuinielaResults,
+  apiPatches: Record<string, ApiLivePatch> = {},
 ): LiveSnapshot {
   const matchMap = overrides.matches ?? {};
   const mergedMatches = matches.map((match) =>
-    applyMatchOverride(match, matchMap[match.id]),
+    applyMatchOverride(
+      match,
+      matchMap[match.id],
+      apiPatches[match.id],
+    ),
   );
 
   const mergedTournament: Tournament = {
@@ -72,12 +98,15 @@ export function applyLiveOverrides(
     matchMvps: { ...quinielaResults.matchMvps, ...(qr.matchMvps ?? {}) },
   };
 
+  const liveMatchCount = mergedMatches.filter((m) => m.status === "live").length;
+
   return {
     matches: mergedMatches,
     tournament: mergedTournament,
     quinielaResults: mergedQuiniela,
     updatedAt: overrides.updatedAt ?? null,
     source: "embedded",
+    liveMatchCount,
   };
 }
 
@@ -117,9 +146,28 @@ export async function fetchLiveOverrides(): Promise<LiveOverrides> {
 }
 
 export async function getLiveSnapshot(): Promise<LiveSnapshot> {
-  const overrides = await fetchLiveOverrides();
-  const snapshot = applyLiveOverrides(overrides);
-  snapshot.source = process.env.LIVE_DATA_URL ? "remote" : "embedded";
+  const [overrides, apiLive] = await Promise.all([
+    fetchLiveOverrides(),
+    process.env.FOOTBALL_DATA_API_KEY
+      ? getCachedFootballDataLive()
+      : Promise.resolve(null),
+  ]);
+
+  const snapshot = applyLiveOverrides(
+    overrides,
+    baseMatches,
+    baseTournament,
+    baseQuinielaResults,
+    apiLive?.patches ?? {},
+  );
+
+  if (apiLive) {
+    snapshot.updatedAt = apiLive.fetchedAt;
+    snapshot.source = "api";
+  } else if (process.env.LIVE_DATA_URL) {
+    snapshot.source = "remote";
+  }
+
   return snapshot;
 }
 

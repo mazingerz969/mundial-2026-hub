@@ -11,10 +11,7 @@ const STORAGE_KEY = "mundial2026_settings";
 export const DEFAULT_SETTINGS: AppSettings = {
   version: 1,
   favoriteTeamId: null,
-  timezone:
-    typeof Intl !== "undefined"
-      ? Intl.DateTimeFormat().resolvedOptions().timeZone
-      : "America/Mexico_City",
+  timezone: "America/Mexico_City",
   spoilerMode: true,
   theme: "dark",
 };

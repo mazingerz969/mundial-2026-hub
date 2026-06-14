@@ -1,19 +1,23 @@
 "use client";
 
 import { PlayerSearchSelect } from "@/components/quiniela/PlayerSearchSelect";
-import { getPlayerById, tournament } from "@/lib/data";
+import { getPlayerById } from "@/lib/data";
 import {
   areAwardsLocked,
   scoreTopScorers,
   scoreTournamentMvp,
 } from "@/lib/games/quiniela/scoring";
 import type { QuinielaResults } from "@/lib/games/quiniela/types";
+import type { Match } from "@/lib/schemas";
 import type { QuinielaStorage } from "@/lib/storage/quiniela";
 import { saveTopScorers, saveTournamentMvp } from "@/lib/storage/quiniela";
+import { formatMatchDateTime } from "@/lib/utils/datetime";
 
 interface AwardsTabProps {
   storage: QuinielaStorage;
   results: QuinielaResults;
+  matches: Match[];
+  timezone: string;
   onUpdate: (storage: QuinielaStorage) => void;
 }
 
@@ -25,12 +29,22 @@ function paddedScorers(ids: string[]): string[] {
   return next.slice(0, 5);
 }
 
-export function AwardsTab({ storage, results, onUpdate }: AwardsTabProps) {
-  const locked = areAwardsLocked(tournament.startDate);
-  const picks = storage.topScorers.filter(Boolean);
-  const topScorersPts = scoreTopScorers(picks, results.topScorers);
-  const mvpPts = scoreTournamentMvp(storage.tournamentMvp, results.tournamentMvp);
+export function AwardsTab({
+  storage,
+  results,
+  matches,
+  timezone,
+  onUpdate,
+}: AwardsTabProps) {
+  const locked = areAwardsLocked(matches);
+  const firstMatch = [...matches].sort(
+    (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
+  )[0];
+
   const slots = paddedScorers(storage.topScorers);
+  const filledScorers = slots.filter(Boolean).length;
+  const topScorersPts = scoreTopScorers(slots, results.topScorers);
+  const mvpPts = scoreTournamentMvp(storage.tournamentMvp, results.tournamentMvp);
 
   function setScorerAt(index: number, playerId: string | null) {
     const next = paddedScorers(storage.topScorers);
@@ -41,11 +55,34 @@ export function AwardsTab({ storage, results, onUpdate }: AwardsTabProps) {
     } else {
       next[index] = "";
     }
-    onUpdate(saveTopScorers(next.filter(Boolean)));
+    onUpdate(saveTopScorers(next));
   }
 
   return (
     <div className="space-y-8">
+      <div
+        className={`rounded-xl border px-4 py-3 text-sm ${
+          locked
+            ? "border-amber-500/30 bg-amber-500/10 text-amber-100"
+            : "border-accent-green/30 bg-accent-green/10 text-text-primary"
+        }`}
+      >
+        {locked ? (
+          <p>
+            Cerrado — el torneo ya empezó. Los premios globales solo se pueden
+            rellenar antes del primer partido.
+          </p>
+        ) : (
+          <p>
+            Abierto — cierra con el pitido inicial
+            {firstMatch
+              ? ` (${formatMatchDateTime(firstMatch.datetime, timezone)})`
+              : ""}
+            . Rellena tu top 5 de goleadores y el MVP del torneo.
+          </p>
+        )}
+      </div>
+
       <section className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold">Pichichi — Top 5 goleadores</h2>
@@ -53,11 +90,9 @@ export function AwardsTab({ storage, results, onUpdate }: AwardsTabProps) {
             Ordena tu top 5 del torneo. Acierto en posición: 10/8/6/4/2 pts.
             En top 5 sin posición exacta: 3 pts.
           </p>
-          {locked && (
-            <p className="mt-2 text-xs text-amber-400">
-              Cerrado — el torneo ya ha comenzado
-            </p>
-          )}
+          <p className="mt-1 text-xs text-text-secondary">
+            {filledScorers}/5 elegidos
+          </p>
         </div>
 
         <div className="space-y-3">

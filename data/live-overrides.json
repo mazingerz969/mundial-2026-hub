@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-06-14T21:19:51.696Z",
+  "updatedAt": "2026-06-14T21:44:46.810Z",
   "tournament": {
     "lastUpdated": "2026-06-14"
   },
   "matches": {
-    "match-group-a-01": {
+    "fd-537327": {
       "status": "finished",
       "datetime": "2026-06-11T19:00:00Z",
       "score": {
@@ -12,7 +12,23 @@
         "away": 0
       }
     },
-    "match-group-d-03": {
+    "fd-537328": {
+      "status": "finished",
+      "datetime": "2026-06-12T02:00:00Z",
+      "score": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    "fd-537333": {
+      "status": "finished",
+      "datetime": "2026-06-12T19:00:00Z",
+      "score": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    "fd-537345": {
       "status": "finished",
       "datetime": "2026-06-13T01:00:00Z",
       "score": {
@@ -20,7 +36,7 @@
         "away": 1
       }
     },
-    "match-group-b-04": {
+    "fd-537334": {
       "status": "finished",
       "datetime": "2026-06-13T19:00:00Z",
       "score": {
@@ -28,7 +44,7 @@
         "away": 1
       }
     },
-    "match-group-c-01": {
+    "fd-537339": {
       "status": "finished",
       "datetime": "2026-06-13T22:00:00Z",
       "score": {
@@ -36,7 +52,7 @@
         "away": 1
       }
     },
-    "match-group-c-02": {
+    "fd-537340": {
       "status": "finished",
       "datetime": "2026-06-14T01:00:00Z",
       "score": {
@@ -44,7 +60,15 @@
         "away": 1
       }
     },
-    "match-group-e-01": {
+    "fd-537346": {
+      "status": "finished",
+      "datetime": "2026-06-14T04:00:00Z",
+      "score": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    "fd-537351": {
       "status": "finished",
       "datetime": "2026-06-14T17:00:00Z",
       "score": {
@@ -52,16 +76,18 @@
         "away": 1
       }
     },
-    "match-group-f-01": {
+    "fd-537357": {
       "status": "live",
       "datetime": "2026-06-14T20:00:00Z",
       "score": {
-        "home": 1,
-        "away": 0
+        "home": 2,
+        "away": 1
       }
     }
   },
   "quinielaResults": {
+    "topScorers": [],
+    "tournamentMvp": null,
     "matchMvps": {}
   }
 }

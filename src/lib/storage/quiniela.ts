@@ -26,6 +26,14 @@ export const DEFAULT_QUINIELA: QuinielaStorage = {
   tournamentMvp: null,
 };
 
+const TOP_SCORER_SLOTS = 5;
+
+function padTopScorers(ids: string[]): string[] {
+  const next = [...ids];
+  while (next.length < TOP_SCORER_SLOTS) next.push("");
+  return next.slice(0, TOP_SCORER_SLOTS);
+}
+
 export function loadQuinielaStorage(): QuinielaStorage {
   if (typeof window === "undefined") return { ...DEFAULT_QUINIELA };
 
@@ -39,7 +47,7 @@ export function loadQuinielaStorage(): QuinielaStorage {
       version: 1,
       matches: parsed.matches ?? {},
       matchMvps: parsed.matchMvps ?? {},
-      topScorers: parsed.topScorers ?? [],
+      topScorers: padTopScorers(parsed.topScorers ?? []),
     };
   } catch {
     return { ...DEFAULT_QUINIELA };
@@ -71,7 +79,7 @@ export function saveMatchMvp(matchId: string, playerId: string | null): Quiniela
 
 export function saveTopScorers(playerIds: string[]): QuinielaStorage {
   const storage = loadQuinielaStorage();
-  storage.topScorers = playerIds.slice(0, 5);
+  storage.topScorers = padTopScorers(playerIds);
   saveQuinielaStorage(storage);
   return storage;
 }
@@ -122,7 +130,7 @@ export function computeQuinielaScore(
     total: matchPoints + mvpPoints + topScorersPts + tournamentMvpPts,
     matchPredictionsCount: Object.keys(storage.matches).length,
     matchMvpsCount: Object.keys(storage.matchMvps).length,
-    topScorersCount: storage.topScorers.length,
+    topScorersCount: storage.topScorers.filter(Boolean).length,
     hasTournamentMvp: storage.tournamentMvp != null,
   };
 }

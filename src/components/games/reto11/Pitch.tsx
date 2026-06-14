@@ -1,6 +1,7 @@
 "use client";
 
 import { PlayerAvatar } from "@/components/data/PlayerAvatar";
+import { getPlayerCost } from "@/lib/games/reto11/cost";
 import type { Player, Position } from "@/lib/schemas";
 import type { PitchSlot } from "@/lib/games/reto11/formations";
 
@@ -73,7 +74,7 @@ export function Pitch({
                           {player.name.split(" ").pop()}
                         </span>
                         <span className="text-[10px] text-emerald-200/80">
-                          {player.rating}
+                          {getPlayerCost(player)}
                         </span>
                         <span
                           role="button"

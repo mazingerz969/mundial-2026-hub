@@ -1,4 +1,5 @@
-import { teams } from "@/lib/data";
+import { realTeams as teams } from "@/lib/data";
+import { getPlayerCost } from "@/lib/games/reto11/cost";
 import type { Challenge, Player } from "@/lib/schemas";
 
 export interface BonusLine {
@@ -82,7 +83,7 @@ export function calculateScore(
   players: Player[],
   challenge: Challenge,
 ): ScoreResult {
-  const base = players.reduce((sum, p) => sum + p.rating, 0);
+  const base = players.reduce((sum, p) => sum + getPlayerCost(p) * 8, 0);
   const bonuses: BonusLine[] = [];
 
   for (const bonus of challenge.scoring.bonuses) {

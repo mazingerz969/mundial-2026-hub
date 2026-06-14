@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AwardsTab } from "@/components/quiniela/AwardsTab";
 import { MatchPredictionsTab } from "@/components/quiniela/MatchPredictionsTab";
 import { useLiveData } from "@/components/providers/LiveDataProvider";
 import { useSettings } from "@/components/providers/SettingsProvider";
+import {
+  getQuinielaAlerts,
+  groupMatchesForQuiniela,
+} from "@/lib/games/quiniela/match-groups";
+import { areAwardsLocked } from "@/lib/games/quiniela/scoring";
 import { QUINIELA_POINTS } from "@/lib/games/quiniela/types";
 import {
   computeQuinielaScore,
@@ -13,18 +18,18 @@ import {
   type QuinielaStorage,
 } from "@/lib/storage/quiniela";
 
-type Tab = "resumen" | "partidos" | "jugadores";
+type Tab = "resumen" | "partidos" | "premios";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "resumen", label: "Resumen" },
   { id: "partidos", label: "Partidos" },
-  { id: "jugadores", label: "Goleadores y MVP" },
+  { id: "premios", label: "Premios del torneo" },
 ];
 
 export function QuinielaView() {
   const { settings } = useSettings();
   const { matches, quinielaResults, tournament } = useLiveData();
-  const [tab, setTab] = useState<Tab>("resumen");
+  const [tab, setTab] = useState<Tab>("partidos");
   const [storage, setStorage] = useState<QuinielaStorage>(() => loadQuinielaStorage());
 
   useEffect(() => {
@@ -32,13 +37,20 @@ export function QuinielaView() {
   }, []);
 
   const score = computeQuinielaScore(storage, matches, quinielaResults);
+  const awardsLocked = areAwardsLocked(matches);
+  const alerts = useMemo(
+    () => getQuinielaAlerts(matches, storage, awardsLocked),
+    [matches, storage, awardsLocked],
+  );
+  const groups = useMemo(() => groupMatchesForQuiniela(matches), [matches]);
+  const scoredMatches = matches.filter((m) => m.status === "finished").length;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Quiniela</h1>
         <p className="mt-1 text-text-secondary">
-          Predicciones del {tournament.shortName} · Partidos, goleadores y MVPs
+          Predicciones del {tournament.shortName} · Partidos y premios globales
         </p>
       </div>
 
@@ -69,6 +81,30 @@ export function QuinielaView() {
 
       {tab === "resumen" && (
         <div className="space-y-4">
+          {(alerts.openWithoutPrediction > 0 ||
+            alerts.closingWithin24h > 0 ||
+            (alerts.awardsOpen && !alerts.awardsFilled)) && (
+            <ul className="space-y-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm">
+              {alerts.closingWithin24h > 0 && (
+                <li>
+                  {alerts.closingWithin24h} partido
+                  {alerts.closingWithin24h === 1 ? "" : "s"} cierra en menos de
+                  24 h sin predicción
+                </li>
+              )}
+              {alerts.openWithoutPrediction > 0 && (
+                <li>
+                  {alerts.openWithoutPrediction} partido
+                  {alerts.openWithoutPrediction === 1 ? "" : "s"} abierto
+                  {alerts.openWithoutPrediction === 1 ? "" : "s"} sin marcador
+                </li>
+              )}
+              {alerts.awardsOpen && !alerts.awardsFilled && (
+                <li>Premios del torneo pendientes — cierran con el primer partido</li>
+              )}
+            </ul>
+          )}
+
           <ul className="divide-y divide-border rounded-xl border border-border bg-bg-secondary">
             {[
               { label: "Resultados de partidos", pts: score.matches, max: "5/partido" },
@@ -93,8 +129,8 @@ export function QuinielaView() {
             <p className="font-medium">Tu progreso</p>
             <ul className="mt-3 space-y-2 text-text-secondary">
               <li>
-                {score.matchPredictionsCount}/{matches.length} partidos con
-                resultado
+                {score.matchPredictionsCount} predicciones · {groups.open.length}{" "}
+                partidos abiertos · {scoredMatches} ya puntuados
               </li>
               <li>{score.matchMvpsCount} MVPs de partido elegidos</li>
               <li>
@@ -122,14 +158,17 @@ export function QuinielaView() {
           storage={storage}
           results={quinielaResults}
           timezone={settings.timezone}
+          spoilerMode={settings.spoilerMode}
           onUpdate={setStorage}
         />
       )}
 
-      {tab === "jugadores" && (
+      {tab === "premios" && (
         <AwardsTab
           storage={storage}
           results={quinielaResults}
+          matches={matches}
+          timezone={settings.timezone}
           onUpdate={setStorage}
         />
       )}

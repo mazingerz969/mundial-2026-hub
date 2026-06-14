@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -18,7 +19,8 @@ import type { Match } from "@/lib/schemas";
 import type { QuinielaResults } from "@/lib/games/quiniela/types";
 import type { Tournament } from "@/lib/schemas";
 
-const REFRESH_MS = 2 * 60 * 1000;
+const REFRESH_MS_LIVE = 30 * 1000;
+const REFRESH_MS_IDLE = 5 * 60 * 1000;
 
 interface LiveDataContextValue extends LiveSnapshot {
   loading: boolean;
@@ -29,9 +31,15 @@ const LiveDataContext = createContext<LiveDataContextValue | null>(null);
 
 const initial = getEmbeddedSnapshot();
 
+function countLiveMatches(matches: Match[]): number {
+  return matches.filter((m) => m.status === "live").length;
+}
+
 export function LiveDataProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<LiveSnapshot>(initial);
   const [loading, setLoading] = useState(true);
+  const snapshotRef = useRef(snapshot);
+  snapshotRef.current = snapshot;
 
   const refresh = useCallback(async () => {
     try {
@@ -48,9 +56,25 @@ export function LiveDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     void refresh();
-    const timer = window.setInterval(() => void refresh(), REFRESH_MS);
-    return () => window.clearInterval(timer);
   }, [refresh]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    const schedule = () => {
+      const liveCount =
+        snapshotRef.current.liveMatchCount ??
+        countLiveMatches(snapshotRef.current.matches);
+      const delay = liveCount > 0 ? REFRESH_MS_LIVE : REFRESH_MS_IDLE;
+      timer = setTimeout(async () => {
+        await refresh();
+        schedule();
+      }, delay);
+    };
+
+    schedule();
+    return () => clearTimeout(timer);
+  }, [refresh, snapshot.liveMatchCount]);
 
   const value = useMemo<LiveDataContextValue>(
     () => ({

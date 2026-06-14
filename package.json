@@ -10,7 +10,10 @@
     "validate-data": "tsx scripts/validate-data.ts",
     "generate-data": "tsx scripts/generate-data.ts",
     "update-match": "tsx scripts/update-match.ts",
-    "sync-results": "tsx scripts/sync-results.ts"
+    "sync-results": "tsx scripts/sync-results.ts",
+    "sync-schedule": "tsx scripts/sync-schedule.ts",
+    "sync-from-api": "tsx scripts/sync-from-api.ts",
+    "fix-schedule": "tsx scripts/fix-schedule-dates.ts"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
