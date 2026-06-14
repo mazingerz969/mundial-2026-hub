@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 
-import type { Team } from "../src/lib/schemas";
+import type { Team } from "../../src/lib/schemas";
 
 const DATA_DIR = join(process.cwd(), "data");
 
