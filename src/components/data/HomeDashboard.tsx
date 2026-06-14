@@ -4,17 +4,14 @@ import Link from "next/link";
 import { ArrowRight, Calendar, ClipboardList, Gamepad2, Shield, Star } from "lucide-react";
 
 import { MatchRow } from "@/components/data/MatchRow";
+import { useLiveData } from "@/components/providers/LiveDataProvider";
 import { useSettings } from "@/components/providers/SettingsProvider";
-import { getQuinielaStats } from "@/lib/storage/quiniela";
+import { getStats, getTeamById } from "@/lib/data";
 import {
-  getNextMatchForTeam,
-  getRecentFinishedMatches,
-  getStats,
-  getTeamById,
-  matches,
-  quinielaResults,
-  tournament,
-} from "@/lib/data";
+  getNextMatchForTeamFromList,
+  getRecentFinishedFromList,
+} from "@/lib/data/live";
+import { getQuinielaStats } from "@/lib/storage/quiniela";
 import {
   formatDateLabel,
   getDateKeyInTimezone,
@@ -30,6 +27,7 @@ function daysUntil(dateIso: string): number {
 
 export function HomeDashboard() {
   const { settings, hydrated } = useSettings();
+  const { matches, quinielaResults, tournament } = useLiveData();
   const stats = getStats();
   const quinielaScore = getQuinielaStats(matches, quinielaResults);
   const tz = settings.timezone;
@@ -46,10 +44,10 @@ export function HomeDashboard() {
     ? getTeamById(settings.favoriteTeamId)
     : null;
   const nextFavoriteMatch = settings.favoriteTeamId
-    ? getNextMatchForTeam(settings.favoriteTeamId)
+    ? getNextMatchForTeamFromList(matches, settings.favoriteTeamId)
     : undefined;
 
-  const recentFinished = getRecentFinishedMatches(3);
+  const recentFinished = getRecentFinishedFromList(matches, 3);
 
   const nextMatchday = [...matches]
     .filter((m) => m.status === "scheduled")

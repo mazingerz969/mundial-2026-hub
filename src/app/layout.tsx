@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { Header } from "@/components/layout/Header";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { ServiceWorkerRegister } from "@/components/layout/ServiceWorkerRegister";
+import { LiveDataProvider } from "@/components/providers/LiveDataProvider";
 import { SettingsProvider } from "@/components/providers/SettingsProvider";
 
 import "./globals.css";
@@ -71,13 +72,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SettingsProvider>
-          <ServiceWorkerRegister />
-          <div className="mx-auto flex min-h-dvh max-w-5xl flex-col">
-            <OfflineBanner />
-            <Header />
-            <main className="flex-1 px-4 pb-24 pt-4 md:pb-8">{children}</main>
-            <BottomNav />
-          </div>
+          <LiveDataProvider>
+            <ServiceWorkerRegister />
+            <div className="mx-auto flex min-h-dvh max-w-5xl flex-col">
+              <OfflineBanner />
+              <Header />
+              <main className="flex-1 px-4 pb-24 pt-4 md:pb-8">{children}</main>
+              <BottomNav />
+            </div>
+          </LiveDataProvider>
         </SettingsProvider>
       </body>
     </html>

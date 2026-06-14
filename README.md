@@ -79,9 +79,60 @@ Texto sugerido:
 
 Añade 2–3 capturas (móvil): inicio, quiniela y ficha de jugador.
 
-## Documentación
+## Actualizar resultados en vivo
 
-Especificación completa en [`docs/`](./docs/).
+Durante el torneo **no hace falta redeployar toda la app** para cada partido.
+
+### Cómo funciona
+
+1. El calendario base vive en `data/matches.json` (horarios, equipos).
+2. Los **resultados y stats oficiales** se parchean en `data/live-overrides.json`.
+3. La web consulta `/api/live` cada ~2 min y fusiona ambos.
+
+### Actualizar un partido (CLI)
+
+```bash
+# Partido terminado
+npm run update-match -- match-group-a-01 2 1 finished
+
+# En directo
+npm run update-match -- match-group-a-02 --live 1 0
+
+# Con penaltis
+npm run update-match -- match-r32-01 1 1 finished --penalties 4 3
+
+# MVP oficial del partido (quiniela)
+npm run update-match -- --mvp match-group-a-01 emiliano-martinez
+
+# Tabla de goleadores
+npm run update-match -- --scorer lionel-messi 3
+
+# Cambiar fase del torneo
+npm run update-match -- --phase round_of_16
+```
+
+Luego:
+
+```bash
+git add data/live-overrides.json
+git commit -m "update live results"
+git push
+```
+
+### Sin redeploy (opcional)
+
+En Vercel → Environment Variables:
+
+| Variable | Valor |
+|----------|--------|
+| `LIVE_DATA_URL` | `https://raw.githubusercontent.com/mazingerz969/mundial-2026-hub/main/data/live-overrides.json` |
+
+Tras cada `git push` del JSON, la web se actualiza sola en ~1–2 min.
+
+### API automática externa (futuro)
+
+Para datos 100 % automáticos haría falta una API de fútbol (API-Football, football-data.org) con clave y un cron en Vercel. El flujo manual/CLI cubre bien el torneo sin coste ni backend propio.
+
 
 ## Licencia
 

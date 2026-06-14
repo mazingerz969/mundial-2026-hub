@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import { AwardsTab } from "@/components/quiniela/AwardsTab";
 import { MatchPredictionsTab } from "@/components/quiniela/MatchPredictionsTab";
+import { useLiveData } from "@/components/providers/LiveDataProvider";
 import { useSettings } from "@/components/providers/SettingsProvider";
-import { matches, quinielaResults, tournament } from "@/lib/data";
 import { QUINIELA_POINTS } from "@/lib/games/quiniela/types";
 import {
   computeQuinielaScore,
@@ -23,6 +23,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function QuinielaView() {
   const { settings } = useSettings();
+  const { matches, quinielaResults, tournament } = useLiveData();
   const [tab, setTab] = useState<Tab>("resumen");
   const [storage, setStorage] = useState<QuinielaStorage>(() => loadQuinielaStorage());
 

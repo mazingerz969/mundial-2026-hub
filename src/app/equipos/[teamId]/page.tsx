@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { SquadList } from "@/components/data/SquadList";
 import { TeamHero } from "@/components/data/TeamHero";
-import { TeamMatches } from "@/components/data/TeamMatches";
-import { getPlayersByTeamId, getTeamById, getMatchesByTeamId } from "@/lib/data";
+import { TeamMatchesLive } from "@/components/data/TeamMatchesLive";
+import { getPlayersByTeamId, getTeamById } from "@/lib/data";
 
 interface TeamPageProps {
   params: Promise<{ teamId: string }>;
@@ -19,7 +19,6 @@ export default async function TeamDetailPage({ params }: TeamPageProps) {
   }
 
   const squad = getPlayersByTeamId(teamId);
-  const teamMatches = getMatchesByTeamId(teamId);
 
   return (
     <div className="space-y-8">
@@ -39,10 +38,10 @@ export default async function TeamDetailPage({ params }: TeamPageProps) {
         <SquadList players={squad} />
       </section>
 
-      {teamMatches.length > 0 && (
+      {squad.length >= 0 && (
         <section>
           <h2 className="mb-4 text-lg font-semibold">Partidos</h2>
-          <TeamMatches matches={teamMatches} />
+          <TeamMatchesLive teamId={teamId} />
         </section>
       )}
     </div>

@@ -5,8 +5,9 @@ import { useSearchParams } from "next/navigation";
 
 import { MatchRow } from "@/components/data/MatchRow";
 import { useSettings } from "@/components/providers/SettingsProvider";
+import { useLiveMatches } from "@/components/providers/LiveDataProvider";
 import { GROUPS, PHASE_LABELS } from "@/lib/constants/labels";
-import { getTeamById, matches, teams } from "@/lib/data";
+import { getTeamById, teams } from "@/lib/data";
 import type { Match } from "@/lib/schemas";
 import {
   getDateKeyInTimezone,
@@ -21,6 +22,7 @@ type StatusFilter = "all" | Match["status"];
 export function CalendarioView() {
   const searchParams = useSearchParams();
   const { settings } = useSettings();
+  const matches = useLiveMatches();
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [teamFilter, setTeamFilter] = useState<string>("");
@@ -37,7 +39,7 @@ export function CalendarioView() {
       const match = matches.find((m) => m.venueId === venueId);
       if (match) setHighlightId(match.id);
     }
-  }, [searchParams]);
+  }, [searchParams, matches]);
 
   const filtered = useMemo(() => {
     const tz = settings.timezone;
@@ -77,6 +79,7 @@ export function CalendarioView() {
           new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
       );
   }, [
+    matches,
     phaseFilter,
     groupFilter,
     teamFilter,
