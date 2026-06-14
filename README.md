@@ -119,9 +119,24 @@ git commit -m "update live results"
 git push
 ```
 
+### Sincronizar desde API (recomendado)
+
+Registro gratis en [football-data.org](https://www.football-data.org/client/register):
+
+```bash
+cp .env.example .env.local   # pega FOOTBALL_DATA_API_KEY
+npm run sync-results         # trae marcadores reales del Mundial
+npm run sync-results -- --dry-run   # vista previa sin escribir
+```
+
+**No usamos IA para marcadores** — alucinan resultados igual que datos inventados.
+
 ### Importante
 
-Los resultados **no se inventan solos**. Hay que introducir los marcadores **oficiales** a mano (FIFA, Marca, etc.) con `update-match`. La app no tiene API de resultados reales conectada.
+| Método | Uso |
+|--------|-----|
+| `npm run sync-results` | Automático desde football-data.org |
+| `npm run update-match` | Manual, cuando verificas el marcador tú mismo |
 
 En Vercel → Environment Variables:
 
@@ -129,11 +144,7 @@ En Vercel → Environment Variables:
 |----------|--------|
 | `LIVE_DATA_URL` | `https://raw.githubusercontent.com/mazingerz969/mundial-2026-hub/main/data/live-overrides.json` |
 
-Tras cada `git push` del JSON, la web se actualiza sola en ~1–2 min.
-
-### API automática externa (futuro)
-
-Para datos 100 % automáticos haría falta una API de fútbol (API-Football, football-data.org) con clave y un cron en Vercel. El flujo manual/CLI cubre bien el torneo sin coste ni backend propio.
+Tras cada `git push` de `live-overrides.json`, la web se actualiza sola en ~1–2 min.
 
 
 ## Licencia

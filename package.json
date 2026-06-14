@@ -9,7 +9,8 @@
     "lint": "next lint",
     "validate-data": "tsx scripts/validate-data.ts",
     "generate-data": "tsx scripts/generate-data.ts",
-    "update-match": "tsx scripts/update-match.ts"
+    "update-match": "tsx scripts/update-match.ts",
+    "sync-results": "tsx scripts/sync-results.ts"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
