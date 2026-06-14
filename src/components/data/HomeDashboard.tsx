@@ -8,8 +8,11 @@ import { useLiveData } from "@/components/providers/LiveDataProvider";
 import { useSettings } from "@/components/providers/SettingsProvider";
 import { getStats, getTeamById } from "@/lib/data";
 import {
+  countFinishedMatches,
+  getLiveFromList,
   getNextMatchForTeamFromList,
   getRecentFinishedFromList,
+  getUpcomingFromList,
 } from "@/lib/data/live";
 import { getQuinielaStats } from "@/lib/storage/quiniela";
 import {
@@ -17,13 +20,7 @@ import {
   getDateKeyInTimezone,
   getTodayKeyInTimezone,
 } from "@/lib/utils/datetime";
-
-function daysUntil(dateIso: string): number {
-  const start = new Date(`${dateIso}T12:00:00Z`);
-  const now = new Date();
-  const diff = start.getTime() - now.getTime();
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-}
+import { getTournamentStatusLabel } from "@/lib/utils/tournament-status";
 
 export function HomeDashboard() {
   const { settings, hydrated } = useSettings();
@@ -40,23 +37,21 @@ export function HomeDashboard() {
         new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
     );
 
+  const liveNow = getLiveFromList(matches);
+  const finishedCount = countFinishedMatches(matches);
+  const recentFinished = getRecentFinishedFromList(matches, 5);
+  const nextMatch = getUpcomingFromList(matches, 1)[0];
+  const tournamentBadge = getTournamentStatusLabel(
+    tournament.startDate,
+    tournament.endDate,
+  );
+
   const favoriteTeam = settings.favoriteTeamId
     ? getTeamById(settings.favoriteTeamId)
     : null;
   const nextFavoriteMatch = settings.favoriteTeamId
     ? getNextMatchForTeamFromList(matches, settings.favoriteTeamId)
     : undefined;
-
-  const recentFinished = getRecentFinishedFromList(matches, 3);
-
-  const nextMatchday = [...matches]
-    .filter((m) => m.status === "scheduled")
-    .sort(
-      (a, b) =>
-        new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
-    )[0];
-
-  const daysToKickoff = daysUntil(tournament.startDate);
 
   return (
     <div className="space-y-8">
@@ -76,10 +71,13 @@ export function HomeDashboard() {
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-accent-gold/30 bg-accent-gold/10 px-3 py-1 text-sm font-medium text-accent-gold">
-              {daysToKickoff === 0
-                ? "El torneo arranca hoy"
-                : `Faltan ${daysToKickoff} días`}
+              {tournamentBadge}
             </span>
+            {finishedCount > 0 && (
+              <span className="text-sm text-text-secondary">
+                {finishedCount} partidos jugados
+              </span>
+            )}
             <span className="text-sm text-text-secondary">
               {stats.teamCount} equipos · {stats.playerCount} jugadores ·{" "}
               {stats.matchCount} partidos
@@ -131,6 +129,28 @@ export function HomeDashboard() {
         </section>
       ) : null}
 
+      {liveNow.length > 0 && (
+        <section>
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+            <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-red-500" />
+            En directo
+          </h2>
+          <ul className="space-y-3">
+            {liveNow.map((match) => (
+              <li key={match.id}>
+                <MatchRow
+                  match={match}
+                  timezone={tz}
+                  spoilerMode={false}
+                  compact
+                  highlight
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Hoy</h2>
@@ -160,27 +180,21 @@ export function HomeDashboard() {
               Hoy no hay partidos en tu zona horaria (
               {settings.timezone.replace(/_/g, " ")}).
             </p>
-            {nextMatchday && (
+            {nextMatch ? (
               <p className="mt-2">
-                Próximo:{" "}
+                Próximo partido:{" "}
                 <span className="text-text-primary">
-                  {formatDateLabel(nextMatchday.datetime, tz)}
+                  {formatDateLabel(nextMatch.datetime, tz)}
                 </span>
                 {" — "}
-                {getTeamById(nextMatchday.homeTeamId)?.name} vs{" "}
-                {getTeamById(nextMatchday.awayTeamId)?.name}
+                {getTeamById(nextMatch.homeTeamId)?.name} vs{" "}
+                {getTeamById(nextMatch.awayTeamId)?.name}
               </p>
-            )}
-            {!nextMatchday && (
+            ) : finishedCount > 0 ? (
               <p className="mt-2">
-                El torneo arranca el{" "}
-                {new Date(tournament.startDate).toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                })}
-                .
+                Jornada 1 completada · próxima jornada el 19 de junio.
               </p>
-            )}
+            ) : null}
           </div>
         )}
       </section>
@@ -203,10 +217,18 @@ export function HomeDashboard() {
         </section>
       )}
 
-      {settings.spoilerMode && hydrated && (
-        <p className="text-center text-xs text-text-secondary">
-          Modo sin spoilers activo — los resultados están ocultos
-        </p>
+      {settings.spoilerMode && hydrated && finishedCount > 0 && (
+        <section className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center text-sm">
+          <p className="text-amber-200">
+            Modo sin spoilers activo — {finishedCount} resultados ocultos
+          </p>
+          <Link
+            href="/configuracion"
+            className="mt-2 inline-block font-medium text-accent-green hover:underline"
+          >
+            Ver resultados en configuración →
+          </Link>
+        </section>
       )}
 
       <section>

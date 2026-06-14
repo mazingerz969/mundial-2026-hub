@@ -1,6 +1,178 @@
 {
-  "updatedAt": null,
-  "tournament": {},
-  "matches": {},
+  "updatedAt": "2026-06-14T21:02:12.625Z",
+  "tournament": {
+    "currentPhase": "group",
+    "lastUpdated": "2026-06-14"
+  },
+  "matches": {
+    "match-group-a-01": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    "match-group-a-02": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    "match-group-b-01": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    "match-group-b-02": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    "match-group-c-01": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    "match-group-c-02": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    "match-group-d-01": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    "match-group-d-02": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    "match-group-e-01": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 3
+      }
+    },
+    "match-group-e-02": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    "match-group-f-01": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 3
+      }
+    },
+    "match-group-f-02": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 3
+      }
+    },
+    "match-group-g-01": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    "match-group-g-02": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 3
+      }
+    },
+    "match-group-h-01": {
+      "status": "finished",
+      "score": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    "match-group-h-02": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    "match-group-i-01": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 3
+      }
+    },
+    "match-group-i-02": {
+      "status": "finished",
+      "score": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    "match-group-j-01": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 3
+      }
+    },
+    "match-group-j-02": {
+      "status": "finished",
+      "score": {
+        "home": 3,
+        "away": 3
+      }
+    },
+    "match-group-k-01": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    "match-group-k-02": {
+      "status": "finished",
+      "score": {
+        "home": 2,
+        "away": 3
+      }
+    },
+    "match-group-l-01": {
+      "status": "finished",
+      "score": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    "match-group-l-02": {
+      "status": "finished",
+      "score": {
+        "home": 1,
+        "away": 3
+      }
+    }
+  },
   "quinielaResults": {}
 }

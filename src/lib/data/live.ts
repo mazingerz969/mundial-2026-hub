@@ -133,44 +133,11 @@ export function filterMatchesByTeamId(list: Match[], teamId: string): Match[] {
   );
 }
 
-export function getUpcomingFromList(list: Match[], limit = 5): Match[] {
-  const now = Date.now();
-  return [...list]
-    .filter(
-      (m) =>
-        m.status === "scheduled" ||
-        m.status === "live" ||
-        new Date(m.datetime).getTime() >= now,
-    )
-    .sort(
-      (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
-    )
-    .slice(0, limit);
-}
-
-export function getRecentFinishedFromList(list: Match[], limit = 3): Match[] {
-  return [...list]
-    .filter((m) => m.status === "finished")
-    .sort(
-      (a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime(),
-    )
-    .slice(0, limit);
-}
-
-export function getNextMatchForTeamFromList(
-  list: Match[],
-  teamId: string,
-): Match | undefined {
-  const now = Date.now();
-  return [...list]
-    .filter(
-      (m) =>
-        (m.homeTeamId === teamId || m.awayTeamId === teamId) &&
-        (m.status === "scheduled" ||
-          m.status === "live" ||
-          new Date(m.datetime).getTime() >= now),
-    )
-    .sort(
-      (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
-    )[0];
-}
+export {
+  countFinishedMatches,
+  getLiveFromList,
+  getNextMatchForTeamFromList,
+  getRecentFinishedFromList,
+  getUpcomingFromList,
+  isMatchUpcoming,
+} from "@/lib/utils/tournament-status";
